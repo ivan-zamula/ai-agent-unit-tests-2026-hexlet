@@ -1,110 +1,94 @@
-# Hexlet AI Agent Unit Tests — Demo
+# AI agent unit tests (Hexlet, 2026)
 
-A small demonstration project that showcases **AI-agent-driven unit test generation** in a real-world GitHub workflow.
+[English](README.md) | [Русский](README.ru.md)
 
-## The Demo Flow
+A Hexlet learning demo for generating Python unit tests with an AI agent in GitHub Actions. A developer opens a pull request, the agent checks coverage and adds tests to the same branch, and a maintainer reviews the result.
 
-```
-Developer                   Feature Branch                       PR → GitHub Action → AI Agent → Test Commit
-───────                     ──────────────                       ──────────────────────────────────────────
-  │                              │                                      │
-  │  Implement feature ─────────→│                                      │
-  │  (e.g., data_processor.py)   │                                      │
-  │                              │  Open Pull Request ──────────────────→│
-  │                              │                                      │
-  │                              │         AI agent analyses diff       │
-  │                              │         Identifies missing tests     │
-  │                              │         Generates pytest cases       │
-  │                              │         Commits tests back ─────────→│
-  │                              │                                      │
-  │                              │    Maintainer reviews PR             │
-  │                              │    (human code + AI tests)           │
+The project is small enough to read the source, tests and agent changes together.
+
+## How the demo works
+
+```text
+Feature branch -> Pull request to main -> GitHub Actions -> AI agent
+                                                       -> Test commit on the PR branch
+                                                       -> Maintainer review
 ```
 
-1. **Developer** implements a feature on a `feature/*` branch.
-2. **Pull request** is opened against `main`.
-3. **GitHub Action** triggers the `AI Test Agent` workflow.
-4. **AI agent** inspects the diff, identifies functions without test coverage, and generates appropriate unit tests.
-5. Agent **commits the tests** back to the PR branch.
-6. **Maintainer** reviews the combined PR and decides to accept or reject.
+1. Implement a feature on a `feature/*` branch.
+2. Open a pull request against `main`.
+3. The `AI Test Agent` workflow runs when the PR is opened or updated.
+4. The agent reads the diff, checks test coverage and writes tests for uncovered functions.
+5. It runs the tests, then commits and pushes test changes to the PR branch.
+6. A maintainer reviews the code and generated tests before accepting or rejecting the PR.
 
-## Project Structure
+## Project structure
 
-```
-.
-├── .github/workflows/ai-test-agent.yml   # GitHub Action workflow
-├── features/
-│   └── add-data-processor.md             # Feature specification
-├── src/
-│   ├── calculator.py                     # Calculator — partial test coverage
-│   ├── string_utils.py                   # String utilities — partial test coverage
-│   ├── data_processor.py                 # NEW — no tests yet (intentional gap)
-│   └── geometry.py                       # NEW — no tests yet (intentional gap)
-├── tests/
-│   ├── test_calculator.py                # Tests for add, subtract, multiply
-│   ├── test_string_utils.py              # Tests for reverse, capitalize_words
-│   └── ...                               # AI agent should add missing tests here
-├── pyproject.toml
-└── README.md
-```
+| Path | Content |
+| --- | --- |
+| [.github/workflows/ai-test-agent.yml](.github/workflows/ai-test-agent.yml) | Agent workflow and prompt |
+| [features/add-data-processor.md](features/add-data-processor.md) | Data-processing exercise and acceptance criteria |
+| [features/add-geometry.md](features/add-geometry.md) | Geometry exercise and acceptance criteria |
+| [src](src) | Python modules used in the demo |
+| [tests](tests) | Unit tests for the modules |
+| [pyproject.toml](pyproject.toml) | Python requirements, development dependencies and pytest settings |
 
-## Intentional Test Gaps
+## Modules and test exercises
 
-The following functions exist in `src/` but **lack unit tests** — the AI agent's job is to find and fill these gaps:
+The original exercise asks the agent to find missing tests for the functions below. The repository now includes test files for all four modules. Use a coverage report to choose the next case to add; a test file alone does not show whether every path is covered.
 
-| Module | Function | Covered? |
-|--------|----------|----------|
-| `calculator.py` | `add` | ✅ |
-| `calculator.py` | `subtract` | ✅ |
-| `calculator.py` | `multiply` | ✅ |
-| `calculator.py` | `divide` | ❌ |
-| `calculator.py` | `factorial` | ❌ |
-| `calculator.py` | `is_prime` | ❌ |
-| `string_utils.py` | `reverse` | ✅ |
-| `string_utils.py` | `capitalize_words` | ✅ |
-| `string_utils.py` | `is_palindrome` | ❌ |
-| `string_utils.py` | `count_vowels` | ❌ |
-| `data_processor.py` | `filter_by_key` | ❌ (whole module new) |
-| `data_processor.py` | `sort_by_key` | ❌ |
-| `data_processor.py` | `aggregate_by_key` | ❌ |
-| `data_processor.py` | `merge_records` | ❌ |
-| `geometry.py` | `circle_area` | ❌ (whole module new) |
-| `geometry.py` | `circle_circumference` | ❌ |
-| `geometry.py` | `rectangle_area` | ❌ |
-| `geometry.py` | `rectangle_perimeter` | ❌ |
-| `geometry.py` | `triangle_area` | ❌ |
+| Module | Functions | Test file |
+| --- | --- | --- |
+| [calculator.py](src/calculator.py) | `add`, `subtract`, `multiply`, `divide`, `factorial`, `is_prime`, `gcd` | [test_calculator.py](tests/test_calculator.py) |
+| [string_utils.py](src/string_utils.py) | `reverse`, `capitalize_words`, `is_palindrome`, `count_vowels` | [test_string_utils.py](tests/test_string_utils.py) |
+| [data_processor.py](src/data_processor.py) | `filter_by_key`, `sort_by_key`, `aggregate_by_key`, `merge_records` | [test_data_processor.py](tests/test_data_processor.py) |
+| [geometry.py](src/geometry.py) | `circle_area`, `circle_circumference`, `rectangle_area`, `rectangle_perimeter`, `triangle_area` | [test_geometry.py](tests/test_geometry.py) |
 
-## Running Locally
+The data-processing exercise covers lists of dictionaries, filtering, sorting, counting values and merging consecutive records. Its acceptance criteria include empty inputs and edge cases such as missing keys and `None`. The geometry exercise covers circles, rectangles and triangles, with `ValueError` for negative dimensions, zero-sized shapes and float results. The detailed assignments remain in `features/`.
+
+## Run locally
+
+Use Python 3.10 or newer. CI uses Python 3.12.
 
 ```bash
-# Install with dev dependencies
+git clone https://github.com/ivan-zamula/ai-agent-unit-tests-2026-hexlet.git
+cd ai-agent-unit-tests-2026-hexlet
+python -m venv .venv
+source .venv/bin/activate
 pip install -e ".[dev]"
+```
 
-# Run existing tests
+Run the tests and inspect coverage:
+
+```bash
 pytest tests/ -v
-
-# Show missing coverage
 pytest tests/ --cov=src --cov-report=term-missing
 ```
 
-## Customizing the AI Agent
+## GitHub Actions and the agent
 
-The workflow at `.github/workflows/ai-test-agent.yml` invokes **pi directly with `-p`** (non-interactive mode).
-The prompt instructs pi to:
+The workflow uses the GitHub environment `demo`, Python 3.12 and Node.js/npm. Its job requests `contents: write` and `pull-requests: write` so the agent can commit test changes back to the PR branch. The selected agent is OpenCode:
 
-1. Diff the PR against `main` to see what changed.
-2. Run `pytest --cov=src` to find uncovered functions.
-3. Read source files and existing tests to learn the project style.
-4. Generate pytest tests covering normal cases, edge cases, and error cases.
-5. Verify the new tests pass.
-6. Commit and push back to the PR branch.
+```bash
+npm install -g opencode-ai
+opencode run --model opencode/big-pickle "..."
+```
 
-### To adapt for your own agent
+The full prompt is in [ai-test-agent.yml](.github/workflows/ai-test-agent.yml). It tells the agent to:
 
-- **Change the provider** — replace `ANTHROPIC_API_KEY` with `OPENAI_API_KEY`, `GEMINI_API_KEY`, etc.
-- **Tighten the prompt** — add project-specific conventions (e.g. "use `unittest` instead of pytest", "mock external APIs").
-- **Switch to a Docker image** — pre-install pi and deps to save ~30s per run.
+1. Compare the PR with `main`.
+2. Run pytest with coverage to find uncovered functions.
+3. Read source files and existing tests to follow the project style.
+4. Add normal, edge and exception cases.
+5. Run the tests and fix any generated tests that fail.
+6. Commit changes as `ai-test-agent[bot]` and push them to the PR branch.
 
-## Purpose
+The workflow also writes a GitHub Actions summary with links to the PR and workflow run.
 
-This project is intended as a **living demo** to show how AI agents can be integrated into CI/CD pipelines to automatically improve test coverage. It's deliberately small so that every gap and every generated test can be manually inspected.
+## Adapt the demo
+
+- To use another provider or model, update the OpenCode command and its environment. Store required keys such as `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY` in GitHub Secrets and pass them to the agent step. Adding a secret does not configure the step by itself.
+- Add project conventions to the prompt, such as using `unittest` or mocking external APIs.
+- To use another agent, update both its installation step and invocation.
+- A Docker image with the agent and dependencies already installed can reduce setup work for each run.
+
+The aim is to study how AI-generated tests fit into CI/CD while keeping code review with the maintainer.

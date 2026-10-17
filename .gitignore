@@ -142,3 +142,11 @@ cython_debug/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local environments, editor files and generated output
+*.iml
+.venv/
+.ruff_cache/
+node_modules/
+.env.*
+!env.example
